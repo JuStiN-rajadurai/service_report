@@ -1,278 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Reports - Google Sheets Integration</title>
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body { background: #f5f7fb; font-family: 'Segoe UI', sans-serif; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        .btn-custom { background: linear-gradient(135deg, #4361ee, #3a0ca3); color: white; }
-        .status-badge { padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; }
-        .pending { background: #fff3cd; color: #856404; }
-        .progress { background: #d1ecf1; color: #0c5460; }
-        .completed { background: #d4edda; color: #155724; }
-        .paid { background: #d4edda; color: #155724; }
-        .unpaid { background: #f8d7da; color: #721c24; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Reports – Firestore</title>
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body { background:#f5f7fb; }
+.card { border:none; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,.08); }
+.badge-pill { border-radius:20px; padding:5px 15px; }
+</style>
 </head>
+
 <body>
-    <div class="container py-4">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="text-primary"><i class="bi bi-google"></i> Google Sheets Integration</h1>
-            <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#addModal">
-                <i class="bi bi-plus-circle"></i> Add Report
-            </button>
-        </div>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-3">Loading data from Google Sheets...</p>
-        </div>
+<div class="container py-4">
 
-        <!-- Reports Table -->
-        <div id="reportsTable" class="card d-none">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="bi bi-table"></i> Reports from Google Sheet</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Client</th>
-                                <th>Service</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Paid</th>
-                                <th>Remarks</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h3 class="text-primary">
+<i class="bi bi-database"></i> Service Reports (Firestore)
+</h3>
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+<i class="bi bi-plus-circle"></i> Add Report
+</button>
+</div>
 
-        <!-- No Data Message -->
-        <div id="noData" class="text-center py-5 d-none">
-            <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
-            <h4 class="mt-3">No Reports Found</h4>
-            <p>Add your first report or check Google Sheet connection</p>
-        </div>
+<!-- Loader -->
+<div id="loading" class="text-center py-5">
+<div class="spinner-border text-primary"></div>
+<p class="mt-2">Loading data...</p>
+</div>
 
-        <!-- Stats -->
-        <div class="row mt-4" id="statsSection" style="display: none;">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary">
-                    <div class="card-body">
-                        <h6>Total Reports</h6>
-                        <h3 id="totalReports">0</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success">
-                    <div class="card-body">
-                        <h6>Completed</h6>
-                        <h3 id="completedCount">0</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning">
-                    <div class="card-body">
-                        <h6>Pending</h6>
-                        <h3 id="pendingCount">0</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info">
-                    <div class="card-body">
-                        <h6>Unpaid</h6>
-                        <h3 id="unpaidCount">0</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Table -->
+<div id="reportsTable" class="card d-none">
+<div class="card-body p-0">
+<div class="table-responsive">
+<table class="table table-hover mb-0">
+<thead class="table-light">
+<tr>
+<th>#</th>
+<th>Client</th>
+<th>Service</th>
+<th>Date</th>
+<th>Status</th>
+<th>Paid</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
 
-    <!-- Add Report Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Add New Report to Google Sheet</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="reportForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Client Name</label>
-                                <input type="text" class="form-control" id="clientName" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Service Type</label>
-                                <select class="form-select" id="serviceType" required>
-                                    <option value="">Choose...</option>
-                                    <option>Social Media Marketing</option>
-                                    <option>SEO Optimization</option>
-                                    <option>Website Development</option>
-                                    <option>Email Campaign</option>
-                                    <option>Lead Generation</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Report Date</label>
-                                <input type="date" class="form-control" id="reportDate" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" id="status" required>
-                                    <option>Pending</option>
-                                    <option>In Progress</option>
-                                    <option>Completed</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Paid Status</label>
-                                <select class="form-select" id="paidStatus" required>
-                                    <option value="Paid">Paid</option>
-                                    <option value="Un Paid">Un Paid</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Remarks</label>
-                                <textarea class="form-control" id="remarks" rows="3"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="submitToGoogleSheet()">
-                        <i class="bi bi-google"></i> Save to Google Sheet
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <!-- Configuration Modal -->
-    <div class="modal fade" id="configModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title">Google Sheets Configuration</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <strong>Setup Required:</strong> Add your Google Sheet ID below
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Google Sheet ID</label>
-                        <input type="text" class="form-control" id="sheetIdInput" 
-                               placeholder="Enter your Google Sheet ID">
-                        <small class="text-muted">Find in your Google Sheet URL: docs.google.com/spreadsheets/d/<strong>YOUR_ID_HERE</strong>/edit</small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Sheet Name</label>
-                        <input type="text" class="form-control" id="sheetName" value="Sheet1">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="saveConfig()">Save & Load Data</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- ADD MODAL -->
+<div class="modal fade" id="addModal">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header bg-primary text-white">
+<h5>Add Service Report</h5>
+<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Google Sheets API Library -->
-    <script src="https://apis.google.com/js/api.js"></script>
-    
-   <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwysuyKjqbuppryNsPUf0cWVKfiCVBph_ktQWzTXEkbLZ1_NhoaaIzGfvsa10MCCeNm/exec";
+<div class="modal-body">
+<form id="reportForm">
+<div class="row g-3">
+
+<div class="col-md-6">
+<label>Client</label>
+<input type="text" id="clientName" class="form-control" required>
+</div>
+
+<div class="col-md-6">
+<label>Service</label>
+<select id="serviceType" class="form-select" required>
+<option value="">Select</option>
+<option>Website Development</option>
+<option>SEO</option>
+<option>Social Media</option>
+<option>Maintenance</option>
+</select>
+</div>
+
+<div class="col-md-4">
+<label>Date</label>
+<input type="date" id="reportDate" class="form-control" required>
+</div>
+
+<div class="col-md-4">
+<label>Status</label>
+<select id="status" class="form-select">
+<option>Pending</option>
+<option>In Progress</option>
+<option>Completed</option>
+</select>
+</div>
+
+<div class="col-md-4">
+<label>Payment</label>
+<select id="paidStatus" class="form-select">
+<option>Paid</option>
+<option>Un Paid</option>
+</select>
+</div>
+
+<div class="col-12">
+<label>Remarks</label>
+<textarea id="remarks" class="form-control"></textarea>
+</div>
+
+</div>
+</form>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+<button class="btn btn-primary" onclick="saveReport()">
+<i class="bi bi-cloud-arrow-up"></i> Save
+</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+query,
+orderBy
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔥 REPLACE WITH YOUR FIREBASE CONFIG */
+const firebaseConfig = {
+apiKey: "AIzaSyAkc1evwPeKQeQdzADPeXW6eEsArWKPmzg",
+authDomain: "jstn-service-reports.firebaseapp.com",
+projectId: "jstn-service-reports",
+storageBucket: "jstn-service-reports.firebasestorage.app",
+messagingSenderId: "631641002286",
+appId: "1:631641002286:web:006f522cb4dc6a720a6abf"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* SAVE REPORT */
+window.saveReport = async function () {
+await addDoc(collection(db, "service_reports"), {
+client: clientName.value,
+service: serviceType.value,
+date: reportDate.value,
+status: status.value,
+paid: paidStatus.value,
+remarks: remarks.value,
+createdAt: new Date()
+});
+
+bootstrap.Modal.getInstance(addModal).hide();
+reportForm.reset();
+loadReports();
+};
+
+/* LOAD REPORTS */
+window.loadReports = async function () {
+tableBody.innerHTML = "";
+const q = query(collection(db, "service_reports"), orderBy("createdAt", "desc"));
+const snap = await getDocs(q);
+
+loading.style.display = "none";
+reportsTable.classList.remove("d-none");
+
+let i = 1;
+snap.forEach(doc => {
+const r = doc.data();
+tableBody.innerHTML += `
+<tr>
+<td>${i++}</td>
+<td>${r.client}</td>
+<td>${r.service}</td>
+<td>${r.date}</td>
+<td>${r.status}</td>
+<td>${r.paid}</td>
+<td>${r.remarks || "-"}</td>
+</tr>`;
+});
+};
 
 document.addEventListener("DOMContentLoaded", loadReports);
-
-function submitToGoogleSheet() {
-  const data = {
-    client: clientName.value,
-    service: serviceType.value,
-    date: reportDate.value,
-    status: status.value,
-    paid: paidStatus.value,
-    remarks: remarks.value
-  };
-
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(r => r.json())
-  .then(() => {
-    bootstrap.Modal.getInstance(addModal).hide();
-    reportForm.reset();
-    loadReports();
-  });
-}
-
-function loadReports() {
-  fetch(SCRIPT_URL)
-  .then(r => r.json())
-  .then(rows => {
-    const tbody = tableBody;
-    tbody.innerHTML = "";
-
-    if (!rows.length) return;
-
-    loading.style.display = "none";
-    reportsTable.classList.remove("d-none");
-    statsSection.style.display = "flex";
-
-    let completed = 0, pending = 0, unpaid = 0;
-
-    rows.forEach((row, i) => {
-      if (row.status === "Completed") completed++;
-      if (row.status === "Pending") pending++;
-      if (row.paid === "Un Paid") unpaid++;
-
-      tbody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${row.client}</td>
-        <td>${row.service}</td>
-        <td>${row.date}</td>
-        <td><span class="status-badge completed">${row.status}</span></td>
-        <td><span class="status-badge ${row.paid==='Paid'?'paid':'unpaid'}">${row.paid}</span></td>
-        <td>${row.remarks || "-"}</td>
-        <td>-</td>
-      </tr>`;
-    });
-
-    totalReports.innerText = rows.length;
-    completedCount.innerText = completed;
-    pendingCount.innerText = pending;
-    unpaidCount.innerText = unpaid;
-  });
-}
 </script>
 
-    
 </body>
 </html>
