@@ -162,23 +162,61 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* SAVE REPORT */
+/* SAVE REPORT WITH VALIDATION */
 window.saveReport = async function () {
-  await addDoc(collection(db, "service_reports"), {
-    client: clientName.value.trim(),
-    service: serviceType.value,
-    date: reportDate.value,
-    status: reportStatus.value,
-    paid: paidStatus.value,
-    remarks: remarks.value.trim() || "",
-    createdAt: serverTimestamp()
-  });
 
-  bootstrap.Modal.getInstance(addModal).hide();
-  reportForm.reset();
-  loadReports();
+  const client = clientName.value.trim();
+  const service = serviceType.value;
+  const date = reportDate.value;
+  const status = reportStatus.value || "Pending";
+  const paid = paidStatus.value || "Unpaid";
+  const remarksText = remarks.value.trim();
+
+  // ✅ VALIDATION
+  if (!client) {
+    alert("Please enter Client name");
+    clientName.focus();
+    return;
+  }
+
+  if (!service) {
+    alert("Please select Service");
+    serviceType.focus();
+    return;
+  }
+
+  if (!date) {
+    alert("Please select Date");
+    reportDate.focus();
+    return;
+  }
+
+  if (!remarksText) {
+    alert("Please enter Remarks");
+    remarks.focus();
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "service_reports"), {
+      client: client,
+      service: service,
+      date: date,
+      status: status,
+      paid: paid,
+      remarks: remarksText,
+      createdAt: serverTimestamp()
+    });
+
+    bootstrap.Modal.getInstance(addModal).hide();
+    reportForm.reset();
+    loadReports();
+
+  } catch (error) {
+    console.error("Error saving report:", error);
+    alert("Failed to save report. Please try again.");
+  }
 };
-
 /* DELETE REPORT */
 window.deleteReport = async function (id) {
   if (!confirm("Are you sure you want to delete this report?")) return;
