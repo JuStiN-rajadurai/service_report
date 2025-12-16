@@ -246,7 +246,7 @@ window.loadReports = async function () {
         <td>${r.date}</td>
         <td>${r.status}</td>
         <td>${r.paid}</td>
-        <td><textarea class="form-control">${r.remarks || "-"}</textarea></td>
+        <td><textarea class="form-control" readonly>${r.remarks || "-"}</textarea></td>
         <td>
           <button class="btn btn-sm btn-danger" onclick="deleteReport('${d.id}')">
             <i class="bi bi-trash"></i>
