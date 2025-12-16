@@ -95,7 +95,7 @@ body { background:#f5f7fb; }
 
 <div class="col-md-4">
 <label>Status</label>
-<select id="status" class="form-select">
+<select id="reportStatus" class="form-select">
 <option>Pending</option>
 <option>In Progress</option>
 <option>Completed</option>
@@ -164,7 +164,7 @@ await addDoc(collection(db, "service_reports"), {
 client: clientName.value,
 service: serviceType.value,
 date: reportDate.value,
-status: status.value,
+status: reportStatus.value,
 paid: paidStatus.value,
 remarks: remarks.value,
 createdAt: new Date()
