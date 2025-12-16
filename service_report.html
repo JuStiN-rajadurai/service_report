@@ -12,7 +12,6 @@
 <style>
 body { background:#f5f7fb; }
 .card { border:none; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,.08); }
-.badge-pill { border-radius:20px; padding:5px 15px; }
 </style>
 </head>
 
@@ -20,114 +19,115 @@ body { background:#f5f7fb; }
 
 <div class="container py-4">
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-<h3 class="text-primary">
-<i class="bi bi-database"></i> Service Reports (Firestore)
-</h3>
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-<i class="bi bi-plus-circle"></i> Add Report
-</button>
-</div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-primary">
+      <i class="bi bi-database"></i> Service Reports (Firestore)
+    </h3>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+      <i class="bi bi-plus-circle"></i> Add Report
+    </button>
+  </div>
 
-<!-- Loader -->
-<div id="loading" class="text-center py-5">
-<div class="spinner-border text-primary"></div>
-<p class="mt-2">Loading data...</p>
-</div>
+  <!-- Loader -->
+  <div id="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-2">Loading data...</p>
+  </div>
 
-<!-- Table -->
-<div id="reportsTable" class="card d-none">
-<div class="card-body p-0">
-<div class="table-responsive">
-<table class="table table-hover mb-0">
-<thead class="table-light">
-<tr>
-<th>#</th>
-<th>Client</th>
-<th>Service</th>
-<th>Date</th>
-<th>Status</th>
-<th>Paid</th>
-<th>Remarks</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
-</div>
-</div>
-</div>
+  <!-- Table -->
+  <div id="reportsTable" class="card d-none">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
 </div>
 
 <!-- ADD MODAL -->
 <div class="modal fade" id="addModal">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-<div class="modal-header bg-primary text-white">
-<h5>Add Service Report</h5>
-<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-</div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
 
-<div class="modal-body">
-<form id="reportForm">
-<div class="row g-3">
+      <div class="modal-header bg-primary text-white">
+        <h5>Add Service Report</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
 
-<div class="col-md-6">
-<label>Client</label>
-<input type="text" id="clientName" class="form-control" required>
-</div>
+      <div class="modal-body">
+        <form id="reportForm">
+          <div class="row g-3">
 
-<div class="col-md-6">
-<label>Service</label>
-<select id="serviceType" class="form-select" required>
-<option value="">Select</option>
-<option>Website Development</option>
-<option>SEO</option>
-<option>Social Media</option>
-<option>Maintenance</option>
-</select>
-</div>
+            <div class="col-md-6">
+              <label>Client</label>
+              <input type="text" id="clientName" class="form-control" required>
+            </div>
 
-<div class="col-md-4">
-<label>Date</label>
-<input type="date" id="reportDate" class="form-control" required>
-</div>
+            <div class="col-md-6">
+              <label>Service</label>
+              <select id="serviceType" class="form-select" required>
+                <option value="">Select</option>
+                <option>Website Development</option>
+                <option>SEO</option>
+                <option>Social Media</option>
+                <option>Maintenance</option>
+              </select>
+            </div>
 
-<div class="col-md-4">
-<label>Status</label>
-<select id="reportStatus" class="form-select">
-<option>Pending</option>
-<option>In Progress</option>
-<option>Completed</option>
-</select>
-</div>
+            <div class="col-md-4">
+              <label>Date</label>
+              <input type="date" id="reportDate" class="form-control" required>
+            </div>
 
-<div class="col-md-4">
-<label>Payment</label>
-<select id="paidStatus" class="form-select">
-<option>Paid</option>
-<option>Un Paid</option>
-</select>
-</div>
+            <div class="col-md-4">
+              <label>Status</label>
+              <select id="reportStatus" class="form-select">
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
 
-<div class="col-12">
-<label>Remarks</label>
-<textarea id="remarks" class="form-control"></textarea>
-</div>
+            <div class="col-md-4">
+              <label>Payment</label>
+              <select id="paidStatus" class="form-select">
+                <option value="Paid">Paid</option>
+                <option value="Unpaid">Unpaid</option>
+              </select>
+            </div>
 
-</div>
-</form>
-</div>
+            <div class="col-12">
+              <label>Remarks</label>
+              <textarea id="remarks" class="form-control"></textarea>
+            </div>
 
-<div class="modal-footer">
-<button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-<button class="btn btn-primary" onclick="saveReport()">
-<i class="bi bi-cloud-arrow-up"></i> Save
-</button>
-</div>
+          </div>
+        </form>
+      </div>
 
-</div>
-</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" onclick="saveReport()">
+          <i class="bi bi-cloud-arrow-up"></i> Save
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- Bootstrap JS -->
@@ -137,22 +137,23 @@ body { background:#f5f7fb; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-getFirestore,
-collection,
-addDoc,
-getDocs,
-query,
-orderBy
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* 🔥 REPLACE WITH YOUR FIREBASE CONFIG */
+/* FIREBASE CONFIG */
 const firebaseConfig = {
-apiKey: "AIzaSyAkc1evwPeKQeQdzADPeXW6eEsArWKPmzg",
-authDomain: "jstn-service-reports.firebaseapp.com",
-projectId: "jstn-service-reports",
-storageBucket: "jstn-service-reports.firebasestorage.app",
-messagingSenderId: "631641002286",
-appId: "1:631641002286:web:006f522cb4dc6a720a6abf"
+  apiKey: "AIzaSyAkc1evwPeKQeQdzADPeXW6eEsArWKPmzg",
+  authDomain: "jstn-service-reports.firebaseapp.com",
+  projectId: "jstn-service-reports",
+  storageBucket: "jstn-service-reports.firebasestorage.app",
+  messagingSenderId: "631641002286",
+  appId: "1:631641002286:web:006f522cb4dc6a720a6abf"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -160,44 +161,55 @@ const db = getFirestore(app);
 
 /* SAVE REPORT */
 window.saveReport = async function () {
-await addDoc(collection(db, "service_reports"), {
-client: clientName.value,
-service: serviceType.value,
-date: reportDate.value,
-status: reportStatus.value,
-paid: paidStatus.value,
-remarks: remarks.value,
-createdAt: new Date()
-});
+  try {
+    await addDoc(collection(db, "service_reports"), {
+      client: clientName.value.trim(),
+      service: serviceType.value,
+      date: reportDate.value,
+      status: reportStatus.value || "Pending",
+      paid: paidStatus.value || "Unpaid",
+      remarks: remarks.value.trim() || "",
+      createdAt: serverTimestamp()
+    });
 
-bootstrap.Modal.getInstance(addModal).hide();
-reportForm.reset();
-loadReports();
+    bootstrap.Modal.getInstance(addModal).hide();
+    reportForm.reset();
+    loadReports();
+
+  } catch (error) {
+    console.error("Error saving report:", error);
+    alert("Failed to save report. Check console.");
+  }
 };
 
 /* LOAD REPORTS */
 window.loadReports = async function () {
-tableBody.innerHTML = "";
-const q = query(collection(db, "service_reports"), orderBy("createdAt", "desc"));
-const snap = await getDocs(q);
+  tableBody.innerHTML = "";
 
-loading.style.display = "none";
-reportsTable.classList.remove("d-none");
+  const q = query(
+    collection(db, "service_reports"),
+    orderBy("createdAt", "desc")
+  );
 
-let i = 1;
-snap.forEach(doc => {
-const r = doc.data();
-tableBody.innerHTML += `
-<tr>
-<td>${i++}</td>
-<td>${r.client}</td>
-<td>${r.service}</td>
-<td>${r.date}</td>
-<td>${r.status}</td>
-<td>${r.paid}</td>
-<td>${r.remarks || "-"}</td>
-</tr>`;
-});
+  const snap = await getDocs(q);
+
+  loading.style.display = "none";
+  reportsTable.classList.remove("d-none");
+
+  let i = 1;
+  snap.forEach(doc => {
+    const r = doc.data();
+    tableBody.innerHTML += `
+      <tr>
+        <td>${i++}</td>
+        <td>${r.client}</td>
+        <td>${r.service}</td>
+        <td>${r.date}</td>
+        <td>${r.status}</td>
+        <td>${r.paid}</td>
+        <td>${r.remarks || "-"}</td>
+      </tr>`;
+  });
 };
 
 document.addEventListener("DOMContentLoaded", loadReports);
