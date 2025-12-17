@@ -210,6 +210,17 @@ window.saveReport = async function () {
 
     bootstrap.Modal.getInstance(addModal).hide();
     reportForm.reset();
+    emailjs.send("service_5m2bxcq", "template_o4l8ha5", {
+  client: client,
+  service: service,
+  date: date,
+  status: status,
+  paid: paid,
+  remarks: remarksText
+}).then(
+  () => alert("Email sent successfully"),
+  (err) => console.error("Email failed", err)
+);
     loadReports();
 
   } catch (error) {
@@ -257,6 +268,16 @@ window.loadReports = async function () {
 };
 
 document.addEventListener("DOMContentLoaded", loadReports);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+  emailjs.init("cOCG6pbbk9aOD3JJ_");
+})();
+
+
+
 </script>
 
 </body>
